@@ -19,7 +19,7 @@ return new class extends Migration
                 ->onDelete('cascade');
 
             $table->foreignId('kategori_id')
-                ->constrained('kategori_pengaduan')
+                ->constrained('kategori_pengaduans')
                 ->onDelete('cascade');
 
             $table->string('judul');
