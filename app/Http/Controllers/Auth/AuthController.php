@@ -42,11 +42,11 @@ class AuthController extends Controller
                 return "ini petugas";
             } elseif (Auth::user()->role == 'user') {
                 // return redirect('/user');
-                return "ini user";
+                return redirect()->route('masyarakat.dashboard');
             }
         }
 
-        return back()->with('error', 'Email atau password salah');
+        return back()->with('error', 'Email atau password salah')->withInput();
     }
 
     public function register(Request $request){
@@ -64,4 +64,14 @@ class AuthController extends Controller
         return redirect()->route('login')->with('success', 'Registrasi berhasil, silakan login');
 
     }   
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
+    }
 }

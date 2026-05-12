@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Masyarakat\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -14,6 +15,10 @@ Route::get('/register', function () {
     return view('Auth.register');
 })->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('registerProses');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+// Route::get('/test', function() {
+//     return view('layout.app');
+// });
 
 
 Route::get('/admin', function () {
@@ -24,7 +29,4 @@ Route::get('/petugas', function () {
     return "Dashboard Petugas";
 });
 
-Route::get('/user', function () {
-    return "Dashboard User";
-});
-
+Route::get('/masyarakat', [DashboardController::class, 'index'])->name('masyarakat.dashboard');
