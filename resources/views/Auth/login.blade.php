@@ -4,12 +4,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Login — Pengaduan</title>
+    <title>Login — Pengaduan Masyarakat</title>
     <link rel="stylesheet" href="{{ asset('assets') }}/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="{{ asset('assets') }}/vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="{{ asset('assets') }}/css/style.css">
     <link rel="shortcut icon" href="{{ asset('assets') }}/images/favicon.png" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -17,330 +17,346 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             min-height: 100vh;
-            background: #0f172a;
+            background-color: #0b1121;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
             overflow: hidden;
+            color: #ffffff;
         }
 
-        /* Subtle background pattern */
+        /* Animated Glowing Orbs Background */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: 0;
+            animation: float 12s infinite ease-in-out alternate;
+            pointer-events: none;
+        }
+
         body::before {
-            content: '';
+            background: rgba(99, 102, 241, 0.15);
+            top: -20%;
+            left: -10%;
+        }
+
+        body::after {
+            background: rgba(139, 92, 246, 0.15);
+            bottom: -20%;
+            right: -10%;
+            animation-delay: -6s;
+        }
+
+        /* Subtle Grid Texture */
+        .bg-grid {
             position: fixed;
             inset: 0;
-            background-image:
-                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(99,102,241,0.18) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 50% at 80% 90%, rgba(16,185,129,0.12) 0%, transparent 55%);
+            background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
+            z-index: 0;
             pointer-events: none;
         }
 
-        /* Grid dot pattern */
-        body::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
-            background-size: 28px 28px;
-            pointer-events: none;
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
         }
 
         .login-wrapper {
             position: relative;
-            z-index: 1;
+            z-index: 10;
             width: 100%;
             max-width: 440px;
-            padding: 1.25rem;
-            animation: fadeUp 0.5s ease both;
+            padding: 1.5rem;
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(30px); }
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* Brand bar */
+        /* Brand section with floating effect */
         .brand {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .brand-logo {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3), inset 0 2px 0 rgba(255,255,255,0.2);
+            animation: levitate 4s infinite ease-in-out;
         }
 
-        .brand-logo svg { width: 26px; height: 26px; fill: white; }
+        @keyframes levitate {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .brand-logo svg { width: 28px; height: 28px; fill: white; }
 
         .brand-name {
-            font-size: 1rem;
-            font-weight: 600;
-            color: rgba(255,255,255,0.85);
-            letter-spacing: 0.01em;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        /* Card */
+        /* Premium Glass Card */
         .card {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.09);
-            border-radius: 20px;
-            padding: 2.25rem 2.25rem 2rem;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(17, 24, 39, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            padding: 2.5rem;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        .card-heading {
-            margin-bottom: 1.75rem;
-        }
+        .card-heading { margin-bottom: 2rem; text-align: center; }
 
         .card-heading h1 {
             font-size: 1.5rem;
-            font-weight: 600;
-            color: #fff;
-            letter-spacing: -0.02em;
-            line-height: 1.3;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
         }
 
         .card-heading p {
-            font-size: 0.875rem;
-            color: rgba(255,255,255,0.45);
-            margin-top: 0.35rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
         }
 
-        /* Alert */
-        .alert-error {
-            background: rgba(239,68,68,0.12);
-            border: 1px solid rgba(239,68,68,0.3);
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            margin-bottom: 1.25rem;
+        /* Alerts */
+        .alert-error, .alert-session {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-left: 4px solid #ef4444;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .alert-error ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .alert-error li {
-            font-size: 0.8125rem;
+        .alert-error ul { list-style: none; padding: 0; }
+        .alert-error li, .alert-session {
+            font-size: 0.85rem;
             color: #fca5a5;
             display: flex;
-            align-items: flex-start;
-            gap: 6px;
-        }
-
-        .alert-error li::before {
-            content: '!';
-            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: rgba(239,68,68,0.3);
-            font-size: 10px;
-            font-weight: 700;
-            color: #f87171;
-            flex-shrink: 0;
-            margin-top: 1px;
+            gap: 8px;
         }
 
-        .alert-session {
-            background: rgba(239,68,68,0.1);
-            border: 1px solid rgba(239,68,68,0.25);
-            border-radius: 10px;
-            padding: 0.7rem 1rem;
-            margin-top: 1rem;
-            font-size: 0.8125rem;
-            color: #fca5a5;
-        }
-
-        /* Form */
-        .form-group {
-            margin-bottom: 1.125rem;
-        }
+        /* Inputs (Fixed for both Autofill and Toggle Type Issues) */
+        .form-group { margin-bottom: 1.25rem; }
 
         label {
             display: block;
-            font-size: 0.8125rem;
-            font-weight: 500;
-            color: rgba(255,255,255,0.6);
-            margin-bottom: 0.45rem;
-            letter-spacing: 0.01em;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 0.5rem;
         }
 
-        .input-wrap {
-            position: relative;
-        }
+        .input-wrap { position: relative; }
 
         .input-icon {
             position: absolute;
-            left: 14px;
+            left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            width: 17px;
-            height: 17px;
-            color: rgba(255,255,255,0.25);
+            width: 18px;
+            height: 18px;
+            color: #64748b;
+            transition: color 0.3s ease;
             pointer-events: none;
+            z-index: 2;
         }
 
-        input[type="email"],
-        input[type="password"] {
+        /* Target all types inside input-wrap globally */
+        .input-wrap input {
             width: 100%;
-            height: 46px;
-            padding: 0 1rem 0 2.75rem;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 11px;
+            height: 52px;
+            padding: 0 1rem 0 3rem;
+            background: rgba(15, 23, 42, 0.6) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
             font-family: inherit;
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.9);
-            transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+            font-size: 0.95rem;
+            color: #ffffff !important;
+            transition: all 0.3s ease;
             outline: none;
-            -webkit-appearance: none;
+            position: relative;
+            z-index: 1;
         }
 
-        input[type="email"]::placeholder,
-        input[type="password"]::placeholder {
-            color: rgba(255,255,255,0.2);
+        .input-wrap input::placeholder { color: #475569; }
+
+        .input-wrap input:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(15, 23, 42, 0.8) !important;
         }
 
-        input[type="email"]:hover,
-        input[type="password"]:hover {
-            border-color: rgba(255,255,255,0.2);
+        .input-wrap input:focus {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.05) !important;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
         }
 
-        input[type="email"]:focus,
-        input[type="password"]:focus {
-            border-color: rgba(99,102,241,0.7);
-            background: rgba(99,102,241,0.07);
-            box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+        .input-wrap input:focus ~ .input-icon { color: #6366f1; }
+
+        .input-wrap input.is-invalid {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.05) !important;
         }
 
-        input.is-invalid {
-            border-color: rgba(239,68,68,0.6);
-            background: rgba(239,68,68,0.06);
+        /* FORCE OVERRIDE BROWSER AUTOFILL DESIGN (Glitches fixed here) */
+        .input-wrap input:-webkit-autofill,
+        .input-wrap input:-webkit-autofill:hover,
+        .input-wrap input:-webkit-autofill:focus,
+        .input-wrap input:-webkit-autofill:active {
+            -webkit-text-fill-color: #ffffff !important;
+            box-shadow: 0 0 0px 1000px #0e1626 inset !important; /* Forces dark inner shield background */
+            border-color: rgba(99, 102, 241, 0.4);
+            transition: background-color 5000s ease-in-out 0s;
         }
 
         .toggle-pw {
             position: absolute;
-            right: 13px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
             cursor: pointer;
-            color: rgba(255,255,255,0.3);
-            padding: 4px;
-            border-radius: 6px;
+            color: #64748b;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: color 0.15s;
+            z-index: 2;
         }
 
-        .toggle-pw:hover { color: rgba(255,255,255,0.6); }
-        .toggle-pw svg { width: 17px; height: 17px; }
+        .toggle-pw:hover {
+            color: #e2e8f0;
+            background: rgba(255,255,255,0.05);
+        }
 
         .field-error {
-            font-size: 0.76rem;
+            font-size: 0.8rem;
             color: #f87171;
-            margin-top: 0.35rem;
+            margin-top: 0.5rem;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
 
-        /* Divider */
         .form-divider {
-            margin: 1.5rem 0 1.25rem;
             height: 1px;
-            background: rgba(255,255,255,0.07);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            margin: 1.75rem 0 1.5rem;
         }
 
-        /* Buttons */
+        /* Buttons Enhancement */
         .btn-primary {
             width: 100%;
-            height: 48px;
-            background: linear-gradient(135deg, #6366f1, #7c3aed);
+            height: 52px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: #fff;
             font-family: inherit;
-            font-size: 0.9375rem;
+            font-size: 1rem;
             font-weight: 600;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             cursor: pointer;
-            transition: opacity 0.18s, transform 0.12s, box-shadow 0.18s;
-            letter-spacing: 0.01em;
-            box-shadow: 0 4px 20px rgba(99,102,241,0.35);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px -6px rgba(99, 102, 241, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: skewX(-25deg);
+            transition: all 0.5s ease;
         }
 
         .btn-primary:hover {
-            opacity: 0.92;
-            box-shadow: 0 4px 24px rgba(99,102,241,0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px -6px rgba(99, 102, 241, 0.8);
         }
 
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
+        .btn-primary:hover::after { left: 150%; }
+
+        .btn-primary:active { transform: translateY(0); }
 
         .btn-row {
             display: flex;
-            gap: 0.75rem;
-            margin-top: 0.875rem;
+            gap: 1rem;
+            margin-top: 1rem;
         }
 
         .btn-ghost {
             flex: 1;
-            height: 42px;
-            background: rgba(255,255,255,0.05);
-            color: rgba(255,255,255,0.55);
+            height: 46px;
+            background: transparent;
+            color: #94a3b8;
             font-family: inherit;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             font-weight: 500;
-            border: 1px solid rgba(255,255,255,0.09);
-            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
             cursor: pointer;
-            transition: background 0.15s, color 0.15s, border-color 0.15s;
+            transition: all 0.2s ease;
         }
 
         .btn-ghost:hover {
-            background: rgba(255,255,255,0.09);
-            color: rgba(255,255,255,0.8);
-            border-color: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05);
+            color: #ffffff;
+            border-color: rgba(255,255,255,0.2);
         }
 
-        /* Footer links */
         .card-footer {
             text-align: center;
-            margin-top: 1.5rem;
-            font-size: 0.8125rem;
-            color: rgba(255,255,255,0.35);
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
         }
 
         .card-footer a {
             color: #818cf8;
             text-decoration: none;
-            font-weight: 500;
-            transition: color 0.15s;
+            font-weight: 600;
+            transition: color 0.2s;
         }
 
-        .card-footer a:hover { color: #a5b4fc; text-decoration: underline; }
+        .card-footer a:hover { color: #c7d2fe; }
 
         @media (max-width: 480px) {
-            .card { padding: 1.75rem 1.5rem 1.5rem; border-radius: 16px; }
+            .card { padding: 2rem 1.5rem; border-radius: 20px; }
+            .login-wrapper { padding: 1rem; }
         }
     </style>
 </head>
 
 <body>
+    <div class="bg-grid"></div>
     <div class="login-wrapper">
 
         <div class="brand">
@@ -363,7 +379,10 @@
                 <div class="alert-error" role="alert">
                     <ul>
                         @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
+                            <li>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                {{ $error }}
+                            </li>
                         @endforeach
                     </ul>
                 </div>
@@ -413,7 +432,7 @@
                             class="{{ $errors->has('password') ? 'is-invalid' : '' }}"
                         >
                         <button type="button" class="toggle-pw" onclick="togglePassword()" aria-label="Tampilkan/sembunyikan kata sandi">
-                            <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>
                             </svg>
                         </button>
@@ -428,7 +447,10 @@
 
                 {{-- Session error --}}
                 @if (session('error'))
-                    <div class="alert-session" role="alert">{{ session('error') }}</div>
+                    <div class="alert-session" role="alert">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        {{ session('error') }}
+                    </div>
                 @endif
 
                 <div class="form-divider"></div>
