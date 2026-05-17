@@ -1,9 +1,8 @@
-   <footer class="footer">
-       <div class="d-sm-flex justify-content-center justify-content-sm-between">
-           <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright ©
-               bootstrapdash.com 2020</span>
-           <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Free <a
-                   href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin
-                   templates</a> from Bootstrapdash.com</span>
-       </div>
-   </footer>
+<footer class="footer-custom d-flex flex-column flex-sm-row justify-content-between align-items-center">
+    <span class="text-center text-sm-left mb-2 mb-sm-0">
+        &copy; {{ date('Y') }} <strong>Aplikasi Pengaduan Masyarakat</strong>. All rights reserved.
+    </span>
+    <span class="text-center text-sm-right text-muted">
+        Dikembangkan Secara Mandiri &bull; Laporkan Dengan Bijak
+    </span>
+</footer>

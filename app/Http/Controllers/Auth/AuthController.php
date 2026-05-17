@@ -34,14 +34,15 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
+            // SINKRONISASI RUTE REDIRECT (Sesuai Ketentuan Incremental & Perbaikan Bug Petugas)
             if (Auth::user()->role == 'admin') {
-                // return redirect('/admin');
-                return "ini admin";
+                // Mengubah dari return string menjadi redirect dinamis ke halaman admin
+                return redirect('/admin');
             } elseif (Auth::user()->role == 'petugas') {
-                // return redirect('/petugas');
-                return "ini petugas";
+                // Mengubah dari "return 'ini petugas';" ke halaman dashboard petugas yang sesungguhnya
+                return redirect('/petugas');
             } elseif (Auth::user()->role == 'user') {
-                // return redirect('/user');
+                // Menjaga rute dashboard masyarakat tetap berjalan utuh tanpa modifikasi destruktif
                 return redirect()->route('masyarakat.dashboard');
             }
         }

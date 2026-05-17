@@ -48,8 +48,7 @@
                     </div>
 
 
-                    <a href="../Auth/login"
-                        class="btn px-4 d-none d-lg-block">Login</a>
+                    <a href="{{ route('login') }}" class="btn px-4 d-none d-lg-block">Login</a>
 
                     <!-- Burger Button (Mobile Only) -->
 
