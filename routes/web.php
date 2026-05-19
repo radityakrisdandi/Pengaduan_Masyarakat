@@ -2,10 +2,15 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Masyarakat\DashboardController;
-use App\Http\Controllers\Masyarakat\PengaduanController; 
+use App\Http\Controllers\Masyarakat\PengaduanController;
 // INCREMENTAL REVISI: Menambahkan import PetugasController tanpa mengganggu import di atas
 use App\Http\Controllers\Petugas\PetugasController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\PengaduanController as AdminPengaduanController;
+use App\Http\Controllers\Admin\KategoriController as AdminKategoriController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Petugas\BeritaController as PetugasBeritaController;
 
 Route::get('/', function () {
     return view('landingpage');
@@ -23,25 +28,67 @@ Route::post('/register', [AuthController::class, 'register'])->name('registerPro
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
-Route::get('/admin', function () {
-    return "Dashboard Admin";
-});
 
+// ==========================================
+// Modul Admin
+// ==========================================
+
+Route::get('/admin', [AdminDashboardController::class, 'index'])
+    ->name('admin.dashboard');
+
+Route::get('/admin/pengaduan', [AdminPengaduanController::class, 'index'])
+    ->name('admin.pengaduan.index');
+
+Route::post(
+    '/admin/kategori/store',
+    [AdminPengaduanController::class, 'storeKategori']
+)
+    ->name('admin.kategori.store');
+
+Route::delete(
+    '/admin/kategori/{id}/delete',
+    [AdminPengaduanController::class, 'destroyKategori']
+)
+    ->name('admin.kategori.destroy');
+
+Route::get(
+    '/admin/user',
+    [AdminUserController::class, 'index']
+)
+    ->name('admin.user.index');
+
+Route::put(
+    '/admin/user/{id}/role',
+    [AdminUserController::class, 'updateRole']
+)
+    ->name('admin.user.role');
+
+Route::delete(
+    '/admin/user/{id}/delete',
+    [AdminUserController::class, 'destroy']
+)
+    ->name('admin.user.destroy');
+
+Route::get(
+    '/admin/berita',
+    [AdminDashboardController::class, 'berita']
+)
+    ->name('admin.berita');
 // NOTE: Route::get('/petugas') lama berupa fungsi closure string telah dikomentari / diganti di bawah
 // agar sinkron dengan sistem pengalihan halaman dashboard petugas asli.
 
 // Grup Rute Terautentikasi (Masyarakat & Petugas)
-Route::middleware(['auth'])->group(function () { 
-    
+Route::middleware(['auth'])->group(function () {
+
     // ==========================================
     // Modul Masyarakat (Tetap Utuh & Berjalan)
     // ==========================================
     Route::get('/masyarakat', [DashboardController::class, 'index'])->name('masyarakat.dashboard');
-    
+
     // Fitur Pengaduan Masyarakat
     Route::get('/masyarakat/pengaduan/create', [PengaduanController::class, 'create'])->name('pengaduan.create');
     Route::post('/masyarakat/pengaduan/store', [PengaduanController::class, 'store'])->name('pengaduan.store');
-    
+
     // REVISI: Menambahkan rute halaman riwayat pengaduan masyarakat
     Route::get('/masyarakat/pengaduan/riwayat', [PengaduanController::class, 'riwayat'])->name('pengaduan.riwayat');
 
@@ -54,16 +101,43 @@ Route::middleware(['auth'])->group(function () {
     // ==========================================
     // Mengarahkan URL /petugas ke halaman dashboard utama petugas berbasis database
     Route::get('/petugas', [PetugasController::class, 'index'])->name('petugas.dashboard');
-    
+
     // Mengarahkan ke halaman tabel daftar pengaduan masyarakat untuk divalidasi petugas
     Route::get('/petugas/pengaduan', [PetugasController::class, 'pengaduanIndex'])->name('petugas.pengaduan.index');
 
     // REVISI TERBARU STAFF: Rute untuk Detail Pengaduan & Form Pengisian Feedback
     Route::get('/petugas/pengaduan/detail/{id}', [PetugasController::class, 'pengaduanDetail'])->name('petugas.pengaduan.detail');
-    
+
     // REVISI TERBARU STAFF: Rute untuk Memproses & Menyimpan Feedback/Tanggapan Petugas
     Route::post('/petugas/pengaduan/tanggapan/{id}', [PetugasController::class, 'beriTanggapan'])->name('petugas.tanggapan.store');
-    
+
     // REVISI TERBARU STAFF: Halaman Riwayat Kerja Feedback Seluruh Masyarakat + Filter Rentang Tanggal
     Route::get('/petugas/riwayat-feedback', [PetugasController::class, 'riwayatFeedback'])->name('petugas.riwayat.index');
+
+    Route::get('/masyarakat/pengaduan/{id}/edit', [PengaduanController::class, 'edit'])
+        ->name('pengaduan.edit');
+
+    Route::put('/masyarakat/pengaduan/{id}/update', [PengaduanController::class, 'update'])
+        ->name('pengaduan.update');
+
+    Route::delete('/masyarakat/pengaduan/{id}/delete', [PengaduanController::class, 'destroy'])
+        ->name('pengaduan.destroy');
 });
+
+Route::get(
+    '/petugas/berita',
+    [PetugasBeritaController::class, 'index']
+)
+    ->name('petugas.berita.index');
+
+Route::post(
+    '/petugas/berita/store',
+    [PetugasBeritaController::class, 'store']
+)
+    ->name('petugas.berita.store');
+
+Route::delete(
+    '/petugas/berita/{id}/delete',
+    [PetugasBeritaController::class, 'destroy']
+)
+    ->name('petugas.berita.destroy');

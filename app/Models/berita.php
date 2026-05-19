@@ -9,7 +9,7 @@ class Berita extends Model
     protected $table = 'berita';
 
     protected $fillable = [
-        'admin_id',
+        'petugas_id',
         'judul',
         'isi_berita',
         'gambar'
@@ -17,6 +17,6 @@ class Berita extends Model
 
     public function admin()
     {
-        return $this->belongsTo(User::class, 'admin_id');
+        return $this->belongsTo(User::class, 'petugas_id');
     }
 }

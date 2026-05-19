@@ -71,7 +71,7 @@
         </a>
     </div>
 
-    @if(session('success'))
+    @if (session('success'))
         <div class="alert alert-success border-0 shadow-sm mb-4 d-flex align-items-center"
             style="border-radius: 12px; background: #dcfce7; color: #15803d;">
             <i class="mdi mdi-check-circle mr-2" style="font-size: 1.3rem;"></i>
@@ -90,6 +90,7 @@
                             <th>Judul Laporan</th>
                             <th>Kategori</th>
                             <th class="text-center">Status</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -101,11 +102,11 @@
                                 <td>
                                     <span class="badge bg-light text-secondary border px-2 py-1"
                                         style="border-radius: 6px; font-weight: 500;">
-                                        {{ $row->nama_kategori ?? 'Umum' }}
+                                        {{ $row->kategori->nama_kategori ?? 'Umum' }}
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                    @if($row->status == 'pending')
+                                    @if ($row->status == 'pending')
                                         <span class="badge-status badge-pending">
                                             <i class="mdi mdi-clock-outline"></i> Pending
                                         </span>
@@ -119,6 +120,23 @@
                                         </span>
                                     @endif
                                 </td>
+                                <td class="text-center">
+
+                                        {{-- Tombol Hapus --}}
+                                        <form action="{{ route('pengaduan.destroy', $row->id) }}" method="POST"
+                                            onsubmit="return confirm('Yakin ingin menghapus pengaduan ini?')">
+
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                style="border-radius: 8px;">
+                                                <i class="mdi mdi-delete"></i>
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </td>
                             </tr>
                         @empty
                             <tr>
@@ -128,7 +146,8 @@
                                             style="font-size: 45px; color: #cbd5e1;"></i>
                                     </div>
                                     <h5 class="mb-1 text-secondary font-weight-semibold">Belum Ada Riwayat</h5>
-                                    <p class="text-muted small mb-0">Semua laporan yang Anda kirimkan melalui form akan tercatat
+                                    <p class="text-muted small mb-0">Semua laporan yang Anda kirimkan melalui form akan
+                                        tercatat
                                         di sini.</p>
                                 </td>
                             </tr>

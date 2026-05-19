@@ -36,8 +36,7 @@ class AuthController extends Controller
 
             // SINKRONISASI RUTE REDIRECT (Sesuai Ketentuan Incremental & Perbaikan Bug Petugas)
             if (Auth::user()->role == 'admin') {
-                // Mengubah dari return string menjadi redirect dinamis ke halaman admin
-                return redirect('/admin');
+                return redirect()->route('admin.dashboard');
             } elseif (Auth::user()->role == 'petugas') {
                 // Mengubah dari "return 'ini petugas';" ke halaman dashboard petugas yang sesungguhnya
                 return redirect('/petugas');

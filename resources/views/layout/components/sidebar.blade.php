@@ -6,6 +6,7 @@
         margin-bottom: 0;
         list-style: none;
     }
+
     .nav-custom .nav-link-custom {
         display: flex;
         align-items: center;
@@ -17,24 +18,29 @@
         transition: all 0.2s;
         border-left: 4px solid transparent;
     }
+
     .nav-custom .nav-link-custom:hover {
         background: #f1f5f9;
         color: #1e293b;
     }
+
     .nav-custom .nav-item-custom.active .nav-link-custom {
         background: #e0e7ff;
         color: #4f46e5;
         border-left-color: #4f46e5;
         font-weight: 600;
     }
+
     .nav-custom .nav-link-custom i {
         font-size: 1.25rem;
         margin-right: 0.75rem;
         color: #94a3b8;
     }
+
     .nav-custom .nav-item-custom.active .nav-link-custom i {
         color: #4f46e5;
     }
+
     .nav-category-custom {
         padding: 1.5rem 1.5rem 0.5rem 1.5rem;
         font-size: 0.75rem;
@@ -46,8 +52,10 @@
 </style>
 
 <div class="py-3">
-    <div class="px-4 py-3 mb-3 d-flex align-items-center" style="background: #f8fafc; border-radius: 12px; margin: 0 1rem;">
-        <div class="avatar-circle bg-primary text-white d-flex align-items-center justify-content-center font-weight-bold mr-3" style="width: 40px; height: 40px; border-radius: 50%;">
+    <div class="px-4 py-3 mb-3 d-flex align-items-center"
+        style="background: #f8fafc; border-radius: 12px; margin: 0 1rem;">
+        <div class="avatar-circle bg-primary text-white d-flex align-items-center justify-content-center font-weight-bold mr-3"
+            style="width: 40px; height: 40px; border-radius: 50%;">
             {{ strtoupper(substr(Auth::user()->name ?? 'M', 0, 1)) }}
         </div>
         <div style="overflow: hidden;">
@@ -58,15 +66,15 @@
 
     <div class="nav-category-custom">Navigation</div>
     <ul class="nav-custom">
-        
-        @if(Auth::user()->role === 'user')
+
+        @if (Auth::user()->role === 'user')
             <li class="nav-item-custom {{ request()->is('masyarakat') ? 'active' : '' }}">
                 <a class="nav-link-custom" href="{{ route('masyarakat.dashboard') }}">
                     <i class="mdi mdi-speedometer"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
-            
+
             <li class="nav-item-custom {{ request()->is('masyarakat/pengaduan/create') ? 'active' : '' }}">
                 <a class="nav-link-custom" href="{{ route('pengaduan.create') }}">
                     <i class="mdi mdi-playlist-play"></i>
@@ -87,7 +95,6 @@
                     <span>Berita</span>
                 </a>
             </li>
-
         @elseif(Auth::user()->role === 'petugas')
             <li class="nav-item-custom {{ request()->is('petugas') ? 'active' : '' }}">
                 <a class="nav-link-custom" href="{{ route('petugas.dashboard') }}">
@@ -95,7 +102,7 @@
                     <span>Dashboard Staff</span>
                 </a>
             </li>
-            
+
             <li class="nav-item-custom {{ request()->is('petugas/pengaduan*') ? 'active' : '' }}">
                 <a class="nav-link-custom" href="{{ route('petugas.pengaduan.index') }}">
                     <i class="mdi mdi-playlist-play"></i>
@@ -107,6 +114,39 @@
                 <a class="nav-link-custom" href="{{ route('petugas.riwayat.index') }}">
                     <i class="mdi mdi-table-large"></i>
                     <span>Riwayat Feedback</span>
+                </a>
+            </li>
+
+            <li class="nav-item-custom {{ request()->is('petugas/berita*') ? 'active' : '' }}">
+                <a class="nav-link-custom" href="{{ route('petugas.berita.index') }}">
+                    <i class="mdi mdi-newspaper"></i>
+                    <span>Kelola Berita</span>
+                </a>
+            </li>
+        @elseif(Auth::user()->role === 'admin')
+            <li class="nav-item-custom {{ request()->is('admin') ? 'active' : '' }}">
+                <a class="nav-link-custom" href="{{ route('admin.dashboard') }}">
+                    <i class="mdi mdi-speedometer"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item-custom {{ request()->is('admin/berita*') ? 'active' : '' }}">
+                <a class="nav-link-custom" href="{{ route('admin.berita') }}">
+                    <i class="mdi mdi-newspaper"></i>
+                    <span>Berita</span>
+                </a>
+            </li>
+
+            <li class="nav-item-custom {{ request()->is('admin/pengaduan*') ? 'active' : '' }}">
+                <a class="nav-link-custom" href="{{ route('admin.pengaduan.index') }}">
+                    <i class="mdi mdi-file-document"></i>
+                    <span>Monitoring Pengaduan</span>
+                </a>
+            </li>
+            <li class="nav-item-custom {{ request()->is('admin/user*') ? 'active' : '' }}">
+                <a class="nav-link-custom" href="{{ route('admin.user.index') }}">
+                    <i class="mdi mdi-account-group"></i>
+                    <span>Manajemen User</span>
                 </a>
             </li>
         @endif
