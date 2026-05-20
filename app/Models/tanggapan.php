@@ -2,27 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Tanggapan extends Model
 {
-    protected $table = 'tanggapan';
+    use HasFactory;
 
-    public $timestamps = false;
+    // REVISI UTAMA: Mengunci nama tabel agar tidak otomatis dibaca 'tanggapans' oleh Laravel
+    protected $table = 'tanggapan'; 
 
-    protected $fillable = [
-        'pengaduan_id',
-        'petugas_id',
-        'isi_tanggapan'
-    ];
+    protected $guarded = [];
 
     public function pengaduan()
     {
-        return $this->belongsTo(Pengaduan::class);
-    }
-
-    public function petugas()
-    {
-        return $this->belongsTo(User::class, 'petugas_id');
+        return $this->belongsTo(Pengaduan::class, 'pengaduan_id');
     }
 }

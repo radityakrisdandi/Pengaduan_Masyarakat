@@ -66,6 +66,7 @@
         border-radius: 8px;
         font-size: 0.8rem;
         font-weight: 600;
+        display: inline-block;
     }
     .status-pending { background-color: #fef9c3; color: #a16207; }
     .status-diproses { background-color: #dbeafe; color: #1d4ed8; }
@@ -116,7 +117,8 @@
                         <small class="text-muted mb-2"><i class="mdi mdi-calendar mr-1"></i>{{ \Carbon\Carbon::parse($news->created_at)->translatedFormat('d M Y') }}</small>
                         <h6 class="font-weight-bold text-dark mb-2" style="line-height: 1.4;">{{ $news->judul }}</h6>
                         <p class="text-muted small mb-3">{{ Str::limit(strip_tags($news->isi_berita), 120) }}</p>
-                        <a href="#" class="btn btn-light btn-sm mt-auto text-primary font-weight-bold" style="border-radius: 8px;">Baca Selengkapnya</a>
+                        
+                        <a href="{{ route('masyarakat.berita') }}" class="btn btn-light btn-sm mt-auto text-primary font-weight-bold" style="border-radius: 8px;">Baca Selengkapnya</a>
                     </div>
                 </div>
             </div>
@@ -150,11 +152,19 @@
                         <tr>
                             <td class="text-dark font-weight-medium">{{ str_pad($key + 1, 2, '0', STR_PAD_LEFT) }}</td>
                             <td class="text-dark font-weight-semibold">{{ $aduan->judul }}</td>
-                            <td class="text-muted">{{ $aduan->nama_kategori ?? 'Umum' }}</td>
+                            
+                            <td class="text-muted">{{ $aduan->kategori->nama_kategori ?? 'Umum' }}</td>
+                            
                             <td>
-                                <span class="badge-status status-{{ $aduan->status }}">
-                                    {{ ucfirst($aduan->status) }}
-                                </span>
+                                @if($aduan->status == '0' || strtolower($aduan->status) == 'pending')
+                                    <span class="badge-status status-pending">Pending</span>
+                                @elseif(strtolower($aduan->status) == 'proses' || strtolower($aduan->status) == 'diproses')
+                                    <span class="badge-status status-diproses">Diproses</span>
+                                @elseif(strtolower($aduan->status) == 'selesai')
+                                    <span class="badge-status status-selesai">Selesai</span>
+                                @else
+                                    <span class="badge-status bg-secondary text-white">{{ ucfirst($aduan->status) }}</span>
+                                @endif
                             </td>
                             <td class="text-muted small">{{ \Carbon\Carbon::parse($aduan->created_at)->translatedFormat('d M Y') }}</td>
                         </tr>

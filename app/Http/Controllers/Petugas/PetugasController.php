@@ -14,10 +14,22 @@ class PetugasController extends Controller
      */
     public function index()
     {
-        $totalPengaduan = DB::table('pengaduans')->count();
-        $totalPending   = DB::table('pengaduans')->where('status', 'pending')->count();
-        $totalProses    = DB::table('pengaduans')->where('status', 'diproses')->count();
-        $totalSelesai   = DB::table('pengaduans')->where('status', 'selesai')->count();
+        // REVISI LOGIKA:
+        // 1. Total Pengaduan menghitung semua data KECUALI yang masih pending tapi sudah dihapus/dibatalkan oleh user.
+        $totalPengaduan = DB::table('pengaduans')
+            ->whereNot(function($query) {
+                $query->where('status', 'pending')->whereNotNull('deleted_at');
+            })->count();
+
+        // 2. Total Pending hanya menghitung yang belum dihapus (deleted_at IS NULL)
+        $totalPending = DB::table('pengaduans')
+            ->where('status', 'pending')
+            ->whereNull('deleted_at')
+            ->count();
+
+        // 3. Total Proses & Selesai tetap menampilkan data meskipun user mencoba menghapusnya (sebagai arsip staff)
+        $totalProses = DB::table('pengaduans')->where('status', 'diproses')->count();
+        $totalSelesai = DB::table('pengaduans')->where('status', 'selesai')->count();
 
         return view('petugas.dashboard', compact('totalPengaduan', 'totalPending', 'totalProses', 'totalSelesai'));
     }
@@ -27,10 +39,17 @@ class PetugasController extends Controller
      */
     public function pengaduanIndex()
     {
+        // REVISI LOGIKA: 
+        // Menggunakan Filter khusus. Jika status 'pending' DAN 'deleted_at' tidak null (artinya dihapus saat belum diproses),
+        // maka pengaduan tersebut akan DISINGKIRKAN dan tidak ditampilkan di tabel staff.
         $listPengaduan = DB::table('pengaduans')
             ->leftJoin('kategori_pengaduans', 'pengaduans.kategori_id', '=', 'kategori_pengaduans.id')
             ->leftJoin('users', 'pengaduans.user_id', '=', 'users.id')
             ->select('pengaduans.*', 'kategori_pengaduans.nama_kategori', 'users.name as nama_pelapor')
+            ->whereNot(function($query) {
+                $query->where('pengaduans.status', 'pending')
+                      ->whereNotNull('pengaduans.deleted_at');
+            })
             ->orderBy('pengaduans.created_at', 'desc')
             ->get();
 
@@ -42,15 +61,21 @@ class PetugasController extends Controller
      */
     public function pengaduanDetail($id)
     {
+        // REVISI LOGIKA:
+        // Staff tidak boleh membuka detail pengaduan yang tipenya masih pending tapi sudah dihapus/dibatalkan oleh user.
         $pengaduan = DB::table('pengaduans')
             ->leftJoin('kategori_pengaduans', 'pengaduans.kategori_id', '=', 'kategori_pengaduans.id')
             ->leftJoin('users', 'pengaduans.user_id', '=', 'users.id')
             ->select('pengaduans.*', 'kategori_pengaduans.nama_kategori', 'users.name as nama_pelapor')
             ->where('pengaduans.id', $id)
+            ->whereNot(function($query) {
+                $query->where('pengaduans.status', 'pending')
+                      ->whereNotNull('pengaduans.deleted_at');
+            })
             ->first();
 
         if (!$pengaduan) {
-            return redirect()->route('petugas.pengaduan.index')->with('error', 'Data pengaduan tidak ditemukan.');
+            return redirect()->route('petugas.pengaduan.index')->with('error', 'Data pengaduan tidak ditemukan atau telah dibatalkan oleh pelapor.');
         }
 
         // Ambil riwayat tanggapan yang sudah ada untuk pengaduan ini
@@ -77,7 +102,7 @@ class PetugasController extends Controller
             'isi_tanggapan.min' => 'Feedback minimal berisi 5 karakter.'
         ]);
 
-        // 1. Masukkan feedback ke tabel tanggapan sesuai skema database asli kelompokmu
+        // 1. Masukkan feedback ke tabel tanggapan
         DB::table('tanggapan')->insert([
             'pengaduan_id'  => $id,
             'petugas_id'    => Auth::id(),
@@ -102,7 +127,7 @@ class PetugasController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        // Mengambil data riwayat tanggapan dari seluruh masyarakat yang ditangani petugas
+        // Mengambil data riwayat tanggapan
         $query = DB::table('tanggapan')
             ->join('pengaduans', 'tanggapan.pengaduan_id', '=', 'pengaduans.id')
             ->join('users as pelapor', 'pengaduans.user_id', '=', 'pelapor.id')
@@ -112,6 +137,7 @@ class PetugasController extends Controller
                 'tanggapan.isi_tanggapan',
                 'pengaduans.judul as judul_pengaduan',
                 'pengaduans.status',
+                'pengaduans.deleted_at',
                 'pelapor.name as nama_pelapor',
                 'petugas.name as nama_petugas'
             );

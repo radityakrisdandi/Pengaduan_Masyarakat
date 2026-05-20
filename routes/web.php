@@ -28,7 +28,6 @@ Route::post('/register', [AuthController::class, 'register'])->name('registerPro
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
-
 // ==========================================
 // Modul Admin
 // ==========================================
@@ -74,10 +73,11 @@ Route::get(
     [AdminDashboardController::class, 'berita']
 )
     ->name('admin.berita');
-// NOTE: Route::get('/petugas') lama berupa fungsi closure string telah dikomentari / diganti di bawah
-// agar sinkron dengan sistem pengalihan halaman dashboard petugas asli.
 
+
+// ==========================================
 // Grup Rute Terautentikasi (Masyarakat & Petugas)
+// ==========================================
 Route::middleware(['auth'])->group(function () {
 
     // ==========================================
@@ -97,7 +97,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     // ==========================================
-    // Modul Petugas / Staff (Fitur Baru)
+    // Modul Petugas / Staff (Fitur Berita & Pengaduan)
     // ==========================================
     // Mengarahkan URL /petugas ke halaman dashboard utama petugas berbasis database
     Route::get('/petugas', [PetugasController::class, 'index'])->name('petugas.dashboard');
@@ -114,6 +114,18 @@ Route::middleware(['auth'])->group(function () {
     // REVISI TERBARU STAFF: Halaman Riwayat Kerja Feedback Seluruh Masyarakat + Filter Rentang Tanggal
     Route::get('/petugas/riwayat-feedback', [PetugasController::class, 'riwayatFeedback'])->name('petugas.riwayat.index');
 
+    // Rute Kelola Berita Sisi Petugas
+    Route::get('/petugas/berita', [PetugasBeritaController::class, 'index'])->name('petugas.berita.index');
+    Route::post('/petugas/berita/store', [PetugasBeritaController::class, 'store'])->name('petugas.berita.store');
+    
+    // REVISI BARU: Ditambahkan agar AJAX Modal Edit dan Form Update Petugas Berjalan Lancar
+    Route::get('/petugas/berita/{id}/edit', [PetugasBeritaController::class, 'edit'])->name('petugas.berita.edit');
+    Route::put('/petugas/berita/{id}', [PetugasBeritaController::class, 'update'])->name('petugas.berita.update');
+    
+    Route::delete('/petugas/berita/{id}/delete', [PetugasBeritaController::class, 'destroy'])->name('petugas.berita.destroy');
+
+    
+    // Aksi Modifikasi Pengaduan Masyarakat
     Route::get('/masyarakat/pengaduan/{id}/edit', [PengaduanController::class, 'edit'])
         ->name('pengaduan.edit');
 
@@ -123,21 +135,3 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/masyarakat/pengaduan/{id}/delete', [PengaduanController::class, 'destroy'])
         ->name('pengaduan.destroy');
 });
-
-Route::get(
-    '/petugas/berita',
-    [PetugasBeritaController::class, 'index']
-)
-    ->name('petugas.berita.index');
-
-Route::post(
-    '/petugas/berita/store',
-    [PetugasBeritaController::class, 'store']
-)
-    ->name('petugas.berita.store');
-
-Route::delete(
-    '/petugas/berita/{id}/delete',
-    [PetugasBeritaController::class, 'destroy']
-)
-    ->name('petugas.berita.destroy');

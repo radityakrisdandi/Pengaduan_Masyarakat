@@ -2,21 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Berita extends Model
 {
-    protected $table = 'berita';
+    use HasFactory;
+
+    // Kunci nama tabel sesuai database (tanpa 's')
+    protected $table = 'berita'; 
 
     protected $fillable = [
-        'petugas_id',
+        'admin_id', // diisi dengan id user/petugas yang membuat
         'judul',
         'isi_berita',
         'gambar'
     ];
-
-    public function admin()
-    {
-        return $this->belongsTo(User::class, 'petugas_id');
-    }
 }

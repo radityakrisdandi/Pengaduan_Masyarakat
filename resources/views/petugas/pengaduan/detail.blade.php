@@ -1,128 +1,268 @@
 @extends('layout.app')
 
 @section('content')
-<div class="min-h-screen bg-[#f8fafc] py-8 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-4xl mx-auto">
-        
-        <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <a href="{{ route('petugas.pengaduan.index') }}" class="text-sm font-medium text-[#4f46e5] hover:text-[#4338ca] flex items-center gap-1">
-                ← Kembali ke Daftar Laporan
-            </a>
+<style>
+    /* Kontainer & Dasar Desain */
+    .detail-container {
+        padding: 2rem;
+        background: #f8fafc;
+        min-height: 100vh;
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    
+    /* Tombol Kembali & Navigasi */
+    .nav-back {
+        margin-bottom: 1.5rem;
+    }
+    .btn-back {
+        text-decoration: none !important;
+        color: #4f46e5;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+    }
+    .btn-back:hover {
+        color: #4338ca;
+        transform: translateX(-4px);
+    }
 
-            @if($pengaduan->status == 'pending')
-            <form action="{{ route('petugas.tanggapan.store', $pengaduan->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin langsung menolak laporan ini?')">
-                @csrf
-                <input type="hidden" name="status" value="selesai">
-                <input type="hidden" name="isi_tanggapan" value="Laporan ditolak oleh petugas karena tidak memenuhi kriteria verifikasi atau indikasi data tidak valid.">
-                <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-rose-50 border border-rose-200 px-4 py-2 text-xs font-semibold text-rose-700 hover:bg-rose-100 transition-all">
-                    ⚠️ Tolak & Selesaikan Cepat
-                </button>
-            </form>
-            @endif
+    /* Kartu Informasi Utama */
+    .info-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+        margin-bottom: 2rem;
+    }
+    .category-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: #f1f5f9;
+        padding: 0.25rem 0.75rem;
+        border-radius: 6px;
+        display: inline-block;
+        margin-bottom: 0.75rem;
+    }
+    .complaint-title {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 1rem;
+        line-height: 1.3;
+    }
+
+    /* Metadata & Deskripsi */
+    .meta-box {
+        display: flex;
+        gap: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+        margin-bottom: 1.5rem;
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+    .description-box {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 1.5rem;
+        color: #334155;
+        line-height: 1.6;
+        font-size: 0.95rem;
+        white-space: pre-line;
+        border: 1px solid #f1f5f9;
+    }
+
+    /* Foto Lampiran Bukti */
+    .image-preview-container {
+        margin-top: 1.5rem;
+        max-width: 500px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Riwayat Tanggapan (Timeline) */
+    .timeline-section {
+        margin-top: 2.5rem;
+    }
+    .timeline-item {
+        background: #ffffff;
+        border-left: 4px solid #4f46e5;
+        padding: 1.25rem 1.5rem;
+        border-radius: 0 12px 12px 0;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        border-top: 1px solid #f1f5f9;
+        border-right: 1px solid #f1f5f9;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    /* Form Respon Petugas */
+    .form-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+    }
+    .custom-textarea {
+        width: 100%;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem;
+        font-size: 0.95rem;
+        transition: border-color 0.2s;
+        outline: none;
+    }
+    .custom-textarea:focus {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+    .btn-submit {
+        background: #4f46e5;
+        color: #ffffff;
+        border: none;
+        padding: 0.85rem 2rem;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: 100%;
+    }
+    .btn-submit:hover {
+        background: #4338ca;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    }
+
+    /* Badge Status */
+    .badge-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .status-pending { background: #fff7ed; color: #c2410c; }
+    .status-diproses { background: #eff6ff; color: #1d4ed8; }
+    .status-selesai { background: #ecfdf5; color: #047857; }
+</style>
+
+<div class="detail-container">
+    
+    <div class="nav-back">
+        <a href="{{ route('petugas.pengaduan.index') }}" class="btn-back">
+            <i class="mdi mdi-arrow-left"></i> Kembali ke Daftar Laporan
+        </a>
+    </div>
+
+    @if(session('success'))
+    <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; font-size: 0.9rem; font-weight: 600;">
+        ✨ {{ session('success') }}
+    </div>
+    @endif
+
+    <div class="info-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div class="category-label">
+                📂 {{ $pengaduan->nama_kategori ?? 'Kategori Umum' }}
+            </div>
+            <div class="badge-status 
+                {{ $pengaduan->status == 'pending' ? 'status-pending' : ($pengaduan->status == 'diproses' ? 'status-diproses' : 'status-selesai') }}">
+                {{ $pengaduan->status }}
+            </div>
+        </div>
+        
+        <h1 class="complaint-title">{{ $pengaduan->judul }}</h1>
+
+        <div class="meta-box">
+            <div><strong>👤 Pelapor:</strong> {{ $pengaduan->nama_pelapor }}</div>
+            <div><strong>📅 Tanggal:</strong> {{ date('d M Y, H:i', strtotime($pengaduan->created_at)) }}</div>
         </div>
 
-        @if(session('success'))
-        <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-sm font-medium text-emerald-800">
-            {{ session('success') }}
+        <p style="font-weight: 700; color: #1e293b; margin-bottom: 0.5rem; font-size: 0.9rem;">Isi Laporan Masyarakat:</p>
+        <div class="description-box">
+            {{ $pengaduan->deskripsi }}
+        </div>
+
+        @if($pengaduan->foto)
+        <p style="font-weight: 700; color: #1e293b; margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 0.9rem;">Lampiran Foto Bukti:</p>
+        <div class="image-preview-container">
+            @php
+                $cleanPath = $pengaduan->foto;
+                if (\Illuminate\Support\Str::contains($cleanPath, 'public/')) {
+                    $cleanPath = str_replace('public/', '', $cleanPath);
+                }
+            @endphp
+            <img src="{{ asset('storage/' . $cleanPath) }}" 
+                 style="width: 100%; height: auto; display: block;" 
+                 alt="Bukti Aduan"
+                 onerror="this.onerror=null; this.src='{{ asset('storage/pengaduan/' . $cleanPath) }}';">
         </div>
         @endif
-
-        <div class="bg-white rounded-xl shadow-sm border border-[#e2e8f0] p-6 mb-8">
-            <div class="flex items-center justify-between border-b border-[#e2e8f0] pb-4 mb-4">
-                <div>
-                    <span class="inline-flex items-center rounded-md bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-800 border border-slate-200 mb-1">
-                        {{ $pengaduan->nama_kategori ?? 'Umum' }}
-                    </span>
-                    <h1 class="text-2xl font-bold text-slate-900">{{ $pengaduan->judul }}</h1>
-                </div>
-                <div>
-                    @if($pengaduan->status == 'pending')
-                        <span class="inline-flex items-center rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 ring-1 ring-[#e2e8f0]">Pending</span>
-                    @elseif($pengaduan->status == 'diproses')
-                        <span class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 ring-1 ring-[#e2e8f0]">Diproses</span>
-                    @else
-                        <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-[#e2e8f0]">Selesai</span>
-                    @endif
-                </div>
-            </div>
-
-            <div class="text-sm text-slate-500 mb-4 flex gap-4">
-                <p><strong>Pelapor:</strong> {{ $pengaduan->nama_pelapor }}</p>
-                <p><strong>Tanggal Masuk:</strong> {{ date('d M Y H:i', strtotime($pengaduan->created_at)) }}</p>
-            </div>
-
-            <div class="bg-slate-50 rounded-lg p-4 border border-[#e2e8f0] mb-4">
-                <p class="text-sm font-semibold text-slate-900 mb-1">Isi Laporan:</p>
-                <p class="text-slate-700 text-sm leading-relaxed whitespace-pre-line">{{ $pengaduan->deskripsi }}</p>
-            </div>
-
-            @if($pengaduan->foto)
-            <div>
-                <p class="text-sm font-semibold text-slate-900 mb-2">Lampiran Foto Bukti:</p>
-                <div class="max-w-md rounded-lg border border-[#e2e8f0] shadow-sm overflow-hidden bg-slate-100 p-2">
-                    @php
-                        // Membersihkan string jika double prefix folder terbawa dari Controller
-                        $cleanPath = $pengaduan->foto;
-                        if (\Illuminate\Support\Str::contains($cleanPath, 'public/')) {
-                            $cleanPath = str_replace('public/', '', $cleanPath);
-                        }
-                    @endphp
-                    <img src="{{ asset('storage/' . $cleanPath) }}" 
-                         class="w-full h-auto rounded-md object-contain max-h-[400px]" 
-                         alt="Bukti aduan"
-                         onerror="this.onerror=null; this.src='{{ asset('storage/pengaduan/' . $cleanPath) }}';">
-                </div>
-            </div>
-            @endif
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-[#e2e8f0] p-6 mb-8">
-            <h3 class="text-lg font-bold text-slate-900 mb-4 border-b border-[#e2e8f0] pb-2">Riwayat Tanggapan Tim</h3>
-            <div class="space-y-4">
-                @forelse($tanggapans as $tgp)
-                <div class="border-l-4 border-[#4f46e5] bg-slate-50/60 p-4 rounded-r-xl border border-y border-r border-[#e2e8f0]">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="text-sm font-bold text-slate-900">{{ $tgp->nama_petugas }} <span class="text-xs font-normal text-slate-400">(Staff)</span></span>
-                        <span class="text-xs text-slate-400">{{ date('d M Y H:i', strtotime($tgp->created_at)) }}</span>
-                    </div>
-                    <p class="text-sm text-slate-700 leading-relaxed">{{ $tgp->isi_tanggapan }}</p>
-                </div>
-                @empty
-                <p class="text-sm text-slate-400 text-center py-4">Belum ada tanggapan tertulis yang dirilis untuk aduan ini.</p>
-                @endforelse
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-[#e2e8f0] p-6">
-            <h3 class="text-lg font-bold text-slate-900 mb-3">Formulir Respon Tindakan Petugas</h3>
-            <form action="{{ route('petugas.tanggapan.store', $pengaduan->id) }}" method="POST">
-                @csrf
-                <div class="mb-4">
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Tulis Tanggapan Resmi :</label>
-                    <textarea name="isi_tanggapan" rows="4" class="w-full rounded-xl border border-[#e2e8f0] px-4 py-3 text-sm focus:border-[#4f46e5] focus:ring-1 focus:ring-[#4f46e5] transition-all" placeholder="Ketik tindak lanjut atau jawaban klarifikasi di sini..." required></textarea>
-                    @error('isi_tanggapan') <span class="text-xs text-rose-600 mt-1 block">{{ $message }}</span> @enderror
-                </div>
-
-                <div class="mb-5">
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Update Progres Status Aduan :</label>
-                    <div class="flex gap-4">
-                        <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-700">
-                            <input type="radio" name="status" value="diproses" {{ $pengaduan->status == 'diproses' ? 'checked' : '' }} class="text-[#4f46e5] focus:ring-[#4f46e5]">
-                            Tandai Sedang Diproses
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-700">
-                            <input type="radio" name="status" value="selesai" {{ $pengaduan->status == 'selesai' ? 'checked' : '' }} class="text-[#4f46e5] focus:ring-[#4f46e5]">
-                            Tandai Selesai / Valid
-                        </label>
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full rounded-lg bg-[#4f46e5] py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#4338ca] transition-all">
-                    Kirim & Perbarui Laporan
-                </button>
-            </form>
-        </div>
-
     </div>
+
+    <div class="timeline-section">
+        <h3 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin-bottom: 1.25rem;">
+            💬 Riwayat Tanggapan Tim
+        </h3>
+        @forelse($tanggapans as $tgp)
+        <div class="timeline-item">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="font-weight: 800; color: #1e293b; font-size: 0.9rem;">{{ $tgp->nama_petugas }} <small style="color: #4f46e5; font-weight: 600;">(Staff)</small></span>
+                <small style="color: #94a3b8;">{{ date('d M Y, H:i', strtotime($tgp->created_at)) }}</small>
+            </div>
+            <p style="margin: 0; color: #475569; font-size: 0.9rem; line-height: 1.5;">{{ $tgp->isi_tanggapan }}</p>
+        </div>
+        @empty
+        <div style="text-align: center; padding: 2rem; color: #94a3b8; font-style: italic; background: #fff; border-radius: 12px; border: 1px dashed #cbd5e1;">
+            Belum ada tanggapan untuk laporan ini.
+        </div>
+        @endforelse
+    </div>
+
+    <div class="form-card" style="margin-top: 3rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem;">
+            ✍️ Berikan Respon & Tindakan
+        </h3>
+        
+        <form action="{{ route('petugas.tanggapan.store', $pengaduan->id) }}" method="POST">
+            @csrf
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #475569; margin-bottom: 0.5rem;">
+                    Tulis Tanggapan Resmi :
+                </label>
+                <textarea name="isi_tanggapan" rows="4" class="custom-textarea" placeholder="Tuliskan jawaban klarifikasi atau langkah tindak lanjut lapangan..." required></textarea>
+                @error('isi_tanggapan') <small style="color: #e11d48; font-weight: 600;">{{ $message }}</small> @enderror
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #475569; margin-bottom: 0.75rem;">
+                    Update Progres Status Laporan :
+                </label>
+                <div style="display: flex; gap: 2rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #334155; font-weight: 600; font-size: 0.9rem;">
+                        <input type="radio" name="status" value="diproses" {{ $pengaduan->status == 'diproses' ? 'checked' : '' }} style="accent-color: #4f46e5; width: 18px; height: 18px;">
+                        ⚙️ Diproses
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: #334155; font-weight: 600; font-size: 0.9rem;">
+                        <input type="radio" name="status" value="selesai" {{ $pengaduan->status == 'selesai' ? 'checked' : '' }} style="accent-color: #059669; width: 18px; height: 18px;">
+                        ✅ Selesai / Tuntas
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                Kirim Tanggapan & Perbarui Progres
+            </button>
+        </form>
+    </div>
+
 </div>
 @endsection

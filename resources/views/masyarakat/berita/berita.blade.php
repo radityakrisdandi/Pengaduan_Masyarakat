@@ -29,7 +29,6 @@
         font-size: 0.8rem;
         color: #64748b;
     }
-    /* Membatasi teks deskripsi maksimal 2 baris agar tinggi kartu tetap rapi */
     .text-truncate-2 {
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -47,8 +46,8 @@
     @forelse($semuaBerita as $berita)
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card news-card h-100 border-0 shadow-sm">
-                @if(!empty($berita->foto))
-                    <img src="{{ asset('storage/' . $berita->foto) }}" class="card-img-top" alt="Foto Berita" style="height: 200px; object-fit: cover;">
+                @if(!empty($berita->gambar))
+                    <img src="{{ asset('storage/' . $berita->gambar) }}" class="card-img-top" alt="Foto Berita" style="height: 200px; object-fit: cover;">
                 @else
                     <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="height: 200px;">
                         <i class="mdi mdi-image-broken-variant" style="font-size: 3rem; color: #cbd5e1;"></i>
@@ -63,7 +62,7 @@
                         </div>
                         <h5 class="news-title mb-2 text-truncate-2" title="{{ $berita->judul }}">{{ $berita->judul }}</h5>
                         <p class="text-muted small mb-4">
-                            {{ Str::limit(strip_tags($berita->isi), 100, '...') }}
+                            {{ Str::limit(strip_tags($berita->isi_berita), 100, '...') }}
                         </p>
                     </div>
                     
@@ -84,8 +83,8 @@
                         </button>
                     </div>
                     <div class="modal-body p-4" style="max-height: 75vh; overflow-y: auto;">
-                        @if(!empty($berita->foto))
-                            <img src="{{ asset('storage/' . $berita->foto) }}" class="img-fluid rounded mb-3 w-100" style="max-height: 350px; object-fit: cover;">
+                        @if(!empty($berita->gambar))
+                            <img src="{{ asset('storage/' . $berita->gambar) }}" class="img-fluid rounded mb-3 w-100" style="max-height: 350px; object-fit: cover;">
                         @endif
                         <div class="news-meta mb-2">
                             <i class="mdi mdi-calendar-range mr-1"></i> {{ \Carbon\Carbon::parse($berita->created_at)->translatedFormat('d F Y, H:i') }} WIB
@@ -93,7 +92,7 @@
                         <h3 class="font-weight-bold mb-3 text-dark">{{ $berita->judul }}</h3>
                         <hr class="my-3">
                         <div class="text-secondary" style="line-height: 1.6; font-size: 0.95rem; white-space: pre-line;">
-                            {{ $berita->isi }}
+                            {{ $berita->isi_berita }}
                         </div>
                     </div>
                     <div class="modal-footer bg-light border-top-0">

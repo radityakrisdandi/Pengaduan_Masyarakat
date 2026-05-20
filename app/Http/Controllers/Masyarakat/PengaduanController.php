@@ -60,14 +60,14 @@ class PengaduanController extends Controller
     }
 
     // Menampilkan riwayat pengaduan user
+
     public function riwayat()
     {
-        $userId = Auth::id();
-
-        $laporan = Pengaduan::with('kategori')
-            ->where('user_id', $userId)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Ambil data laporan milik user yang login tanpa eager loading tanggapan agar anti-crash
+        $laporan = Pengaduan::with(['kategori'])
+                    ->where('user_id', auth()->user()->id)
+                    ->latest()
+                    ->get();
 
         return view('masyarakat.pengaduan.riwayat', compact('laporan'));
     }
