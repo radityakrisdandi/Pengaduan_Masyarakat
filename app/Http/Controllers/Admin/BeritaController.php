@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Petugas;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -25,7 +25,7 @@ class BeritaController extends Controller
 
         $berita = $query->get();
 
-        return view('petugas.berita.index', compact('berita'));
+        return view('admin.berita.index', compact('berita'));
     }
 
     // Simpan berita baru
@@ -53,6 +53,7 @@ class BeritaController extends Controller
             'gambar' => $namaGambar
 
         ]);
+
         return redirect()->back()->with('success', 'Berita berhasil ditambahkan!');
     }
 
@@ -90,9 +91,10 @@ class BeritaController extends Controller
         $berita->update([
             'judul' => $request->judul,
             'isi_berita' => $request->isi_berita,
-            'gambar' => $namaGambar
+            'gambar' => $namaGambar,
+            'updated_at' => now()
         ]);
-
+    
         return redirect()->back()->with('success', 'Berita berhasil diperbarui!');
     }
 

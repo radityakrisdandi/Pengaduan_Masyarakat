@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\PengaduanController as AdminPengaduanController;
 use App\Http\Controllers\Admin\KategoriController as AdminKategoriController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Petugas\BeritaController as PetugasBeritaController;
+use App\Http\Controllers\Admin\BeritaController as AdminBeritaController;
 
 Route::get('/', function () {
     return view('landingpage');
@@ -70,10 +71,27 @@ Route::delete(
 
 Route::get(
     '/admin/berita',
-    [AdminDashboardController::class, 'berita']
+    [AdminBeritaController::class, 'index']
 )
-    ->name('admin.berita');
+    ->name('admin.berita.index');
 
+Route::post(
+    '/admin/berita/store',
+    [AdminBeritaController::class, 'store']
+)
+    ->name('admin.berita.store');
+
+Route::put(
+    '/admin/berita/{id}/update',
+    [AdminBeritaController::class, 'update']
+)
+    ->name('admin.berita.update');
+
+Route::delete(
+    '/admin/berita/{id}/delete',
+    [AdminBeritaController::class, 'destroy']
+)
+    ->name('admin.berita.destroy');
 
 // ==========================================
 // Grup Rute Terautentikasi (Masyarakat & Petugas)
@@ -117,14 +135,14 @@ Route::middleware(['auth'])->group(function () {
     // Rute Kelola Berita Sisi Petugas
     Route::get('/petugas/berita', [PetugasBeritaController::class, 'index'])->name('petugas.berita.index');
     Route::post('/petugas/berita/store', [PetugasBeritaController::class, 'store'])->name('petugas.berita.store');
-    
+
     // REVISI BARU: Ditambahkan agar AJAX Modal Edit dan Form Update Petugas Berjalan Lancar
     Route::get('/petugas/berita/{id}/edit', [PetugasBeritaController::class, 'edit'])->name('petugas.berita.edit');
     Route::put('/petugas/berita/{id}', [PetugasBeritaController::class, 'update'])->name('petugas.berita.update');
-    
+
     Route::delete('/petugas/berita/{id}/delete', [PetugasBeritaController::class, 'destroy'])->name('petugas.berita.destroy');
 
-    
+
     // Aksi Modifikasi Pengaduan Masyarakat
     Route::get('/masyarakat/pengaduan/{id}/edit', [PengaduanController::class, 'edit'])
         ->name('pengaduan.edit');

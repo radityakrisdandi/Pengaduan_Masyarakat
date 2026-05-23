@@ -48,7 +48,8 @@ class PengaduanController extends Controller
             'judul' => $request->judul,
             'deskripsi' => $request->deskripsi,
             'foto' => $namaFoto,
-            'status' => 'pending'
+            'status' => 'pending',
+                
         ]);
 
         return redirect()

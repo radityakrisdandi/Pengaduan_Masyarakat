@@ -13,9 +13,14 @@ class Berita extends Model
     protected $table = 'berita'; 
 
     protected $fillable = [
-        'admin_id', // diisi dengan id user/petugas yang membuat
+        'users_id', // diisi dengan id user/petugas yang membuat
         'judul',
         'isi_berita',
         'gambar'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'users_id');
+    }
 }

@@ -131,9 +131,9 @@
                 </a>
             </li>
             <li class="nav-item-custom {{ request()->is('admin/berita*') ? 'active' : '' }}">
-                <a class="nav-link-custom" href="{{ route('admin.berita') }}">
+                <a class="nav-link-custom" href="{{ route('admin.berita.index') }}">
                     <i class="mdi mdi-newspaper"></i>
-                    <span>Berita</span>
+                    <span>Kelola Berita</span>
                 </a>
             </li>
 

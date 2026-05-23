@@ -22,7 +22,7 @@ class Pengaduan extends Model
         'judul',
         'deskripsi',
         'foto',
-        'status'
+        'status',
     ];
 
     public function user()
