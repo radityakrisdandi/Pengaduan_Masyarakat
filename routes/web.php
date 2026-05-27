@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\KategoriController as AdminKategoriController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Petugas\BeritaController as PetugasBeritaController;
 use App\Http\Controllers\Admin\BeritaController as AdminBeritaController;
+use App\Http\Controllers\LogAktivitasController;
 
 Route::get('/', function () {
     return view('landingpage');
@@ -152,4 +153,21 @@ Route::middleware(['auth'])->group(function () {
 
     Route::delete('/masyarakat/pengaduan/{id}/delete', [PengaduanController::class, 'destroy'])
         ->name('pengaduan.destroy');
+
+    Route::get(
+        '/admin/log-aktivitas',
+        [LogAktivitasController::class, 'index']
+    )
+        ->name('admin.log.index');
+    Route::get(
+        '/petugas/log-aktivitas',
+        [LogAktivitasController::class, 'index']
+    )
+        ->name('petugas.log.index');
+    Route::get(
+        '/masyarakat/log-aktivitas',
+        [LogAktivitasController::class, 'index']
+    )
+        ->name('masyarakat.log.index');
+        
 });

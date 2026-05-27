@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\LogAktivitas;
 class PetugasController extends Controller
 {
     /**
@@ -17,7 +17,7 @@ class PetugasController extends Controller
         // REVISI LOGIKA:
         // 1. Total Pengaduan menghitung semua data KECUALI yang masih pending tapi sudah dihapus/dibatalkan oleh user.
         $totalPengaduan = DB::table('pengaduans')
-            ->whereNot(function($query) {
+            ->whereNot(function ($query) {
                 $query->where('status', 'pending')->whereNotNull('deleted_at');
             })->count();
 
@@ -46,9 +46,9 @@ class PetugasController extends Controller
             ->leftJoin('kategori_pengaduans', 'pengaduans.kategori_id', '=', 'kategori_pengaduans.id')
             ->leftJoin('users', 'pengaduans.user_id', '=', 'users.id')
             ->select('pengaduans.*', 'kategori_pengaduans.nama_kategori', 'users.name as nama_pelapor')
-            ->whereNot(function($query) {
+            ->whereNot(function ($query) {
                 $query->where('pengaduans.status', 'pending')
-                      ->whereNotNull('pengaduans.deleted_at');
+                    ->whereNotNull('pengaduans.deleted_at');
             })
             ->orderBy('pengaduans.created_at', 'desc')
             ->get();
@@ -68,9 +68,9 @@ class PetugasController extends Controller
             ->leftJoin('users', 'pengaduans.user_id', '=', 'users.id')
             ->select('pengaduans.*', 'kategori_pengaduans.nama_kategori', 'users.name as nama_pelapor')
             ->where('pengaduans.id', $id)
-            ->whereNot(function($query) {
+            ->whereNot(function ($query) {
                 $query->where('pengaduans.status', 'pending')
-                      ->whereNotNull('pengaduans.deleted_at');
+                    ->whereNotNull('pengaduans.deleted_at');
             })
             ->first();
 
@@ -115,7 +115,13 @@ class PetugasController extends Controller
             'status'     => $request->status,
             'updated_at' => now()
         ]);
+        LogAktivitas::create([
 
+            'user_id' => auth()->id(),
+
+            'aktivitas' => 'Petugas menanggapi pengaduan'
+
+        ]);
         return redirect()->route('petugas.pengaduan.detail', $id)->with('success', 'Feedback berhasil dikirim dan status laporan diperbarui.');
     }
 

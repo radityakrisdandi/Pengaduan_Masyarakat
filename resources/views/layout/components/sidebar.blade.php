@@ -95,6 +95,12 @@
                     <span>Berita</span>
                 </a>
             </li>
+            <li class="nav-item-custom {{ request()->is('masyarakat/log-aktivitas*') ? 'active' : '' }}">
+                <a class="nav-link-custom" href="{{ route('masyarakat.log.index') }}">
+                    <i class="mdi mdi-history"></i>
+                    <span>Log Aktivitas</span>
+                </a>
+            </li>
         @elseif(Auth::user()->role === 'petugas')
             <li class="nav-item-custom {{ request()->is('petugas') ? 'active' : '' }}">
                 <a class="nav-link-custom" href="{{ route('petugas.dashboard') }}">
@@ -123,6 +129,12 @@
                     <span>Kelola Berita</span>
                 </a>
             </li>
+            <li class="nav-item-custom {{ request()->is('petugas/log-aktivitas*') ? 'active' : '' }}">
+                <a class="nav-link-custom" href="{{ route('petugas.log.index') }}">
+                    <i class="mdi mdi-history"></i>
+                    <span>Log Aktivitas</span>
+                </a>
+            </li>
         @elseif(Auth::user()->role === 'admin')
             <li class="nav-item-custom {{ request()->is('admin') ? 'active' : '' }}">
                 <a class="nav-link-custom" href="{{ route('admin.dashboard') }}">
@@ -147,6 +159,12 @@
                 <a class="nav-link-custom" href="{{ route('admin.user.index') }}">
                     <i class="mdi mdi-account-group"></i>
                     <span>Manajemen User</span>
+                </a>
+            </li>
+            <li class="nav-item-custom {{ request()->is('admin/log-aktivitas*') ? 'active' : '' }}">
+                <a class="nav-link-custom" href="{{ route('admin.log.index') }}">
+                    <i class="mdi mdi-history"></i>
+                    <span>Log Aktivitas</span>
                 </a>
             </li>
         @endif

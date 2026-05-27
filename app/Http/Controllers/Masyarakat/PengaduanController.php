@@ -6,8 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-
-// Import Model
+use App\Models\LogAktivitas;
 use App\Models\Pengaduan;
 use App\Models\kategori_pengaduan;
 
@@ -49,9 +48,15 @@ class PengaduanController extends Controller
             'deskripsi' => $request->deskripsi,
             'foto' => $namaFoto,
             'status' => 'pending',
-                
-        ]);
 
+        ]);
+        LogAktivitas::create([
+
+            'user_id' => auth()->id(),
+
+            'aktivitas' => 'Membuat pengaduan baru'
+
+        ]);
         return redirect()
             ->route('pengaduan.riwayat')
             ->with(
@@ -66,9 +71,9 @@ class PengaduanController extends Controller
     {
         // Ambil data laporan milik user yang login tanpa eager loading tanggapan agar anti-crash
         $laporan = Pengaduan::with(['kategori'])
-                    ->where('user_id', auth()->user()->id)
-                    ->latest()
-                    ->get();
+            ->where('user_id', auth()->user()->id)
+            ->latest()
+            ->get();
 
         return view('masyarakat.pengaduan.riwayat', compact('laporan'));
     }
@@ -82,7 +87,54 @@ class PengaduanController extends Controller
 
         return view('masyarakat.pengaduan.edit', compact('pengaduan', 'kategori'));
     }
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'judul' => 'required|max:255',
+            'kategori_id' => 'required',
+            'deskripsi' => 'required',
+            'foto' => 'image|mimes:jpeg,png,jpg|max:2048'
+        ]);
 
+        $pengaduan = Pengaduan::findOrFail($id);
+
+        $namaFoto = $pengaduan->foto;
+
+        // Jika upload foto baru
+        if ($request->hasFile('foto')) {
+
+            // Hapus foto lama
+            if ($pengaduan->foto) {
+                Storage::disk('public')->delete($pengaduan->foto);
+            }
+
+            $namaFoto = $request->file('foto')
+                ->store('pengaduan', 'public');
+        }
+
+        // Update data
+        $pengaduan->update([
+
+            'kategori_id' => $request->kategori_id,
+            'judul' => $request->judul,
+            'deskripsi' => $request->deskripsi,
+            'foto' => $namaFoto,
+
+        ]);
+
+        // LOG AKTIVITAS
+        LogAktivitas::create([
+
+            'user_id' => auth()->id(),
+
+            'aktivitas' => 'Mengedit pengaduan'
+
+        ]);
+
+        return redirect()
+            ->route('pengaduan.riwayat')
+            ->with('success', 'Pengaduan berhasil diperbarui!');
+    }
 
     public function destroy($id)
     {
@@ -95,7 +147,13 @@ class PengaduanController extends Controller
 
         // Hapus data
         $pengaduan->delete();
+        LogAktivitas::create([
 
+            'user_id' => auth()->id(),
+
+            'aktivitas' => 'Menghapus pengaduan'
+
+        ]);
         return redirect()
             ->route('pengaduan.riwayat')
             ->with('success', 'Pengaduan berhasil dihapus!');

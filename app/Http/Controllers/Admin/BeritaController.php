@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Berita;
 use Illuminate\Support\Facades\Storage;
+use App\Models\LogAktivitas;
 
 class BeritaController extends Controller
 {
@@ -52,10 +53,19 @@ class BeritaController extends Controller
 
             'gambar' => $namaGambar
 
+
         ]);
 
+        LogAktivitas::create([
+
+            'user_id' => auth()->id(),
+
+            'aktivitas' => 'Admin menambahkan berita'
+
+        ]);
         return redirect()->back()->with('success', 'Berita berhasil ditambahkan!');
     }
+
 
     // Ambil data untuk modal edit (Menghasilkan response JSON)
     public function edit($id)
@@ -94,7 +104,14 @@ class BeritaController extends Controller
             'gambar' => $namaGambar,
             'updated_at' => now()
         ]);
-    
+        LogAktivitas::create([
+
+            'user_id' => auth()->id(),
+
+            'aktivitas' => 'Admin mengedit berita'
+
+        ]);
+
         return redirect()->back()->with('success', 'Berita berhasil diperbarui!');
     }
 
@@ -109,6 +126,13 @@ class BeritaController extends Controller
         }
 
         $berita->delete();
+        LogAktivitas::create([
+
+            'user_id' => auth()->id(),
+
+            'aktivitas' => 'Admin menghapus berita'
+
+        ]);
 
         return redirect()->back()->with('success', 'Berita berhasil dihapus!');
     }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Berita;
 use Illuminate\Support\Facades\Storage;
+use App\Models\LogAktivitas;
 
 class BeritaController extends Controller
 {
@@ -53,6 +54,13 @@ class BeritaController extends Controller
             'gambar' => $namaGambar
 
         ]);
+        LogAktivitas::create([
+
+            'user_id' => auth()->id(),
+
+            'aktivitas' => 'Petugas menambahkan berita'
+
+        ]);
         return redirect()->back()->with('success', 'Berita berhasil ditambahkan!');
     }
 
@@ -63,6 +71,13 @@ class BeritaController extends Controller
         $berita = Berita::findOrFail($id);
 
         // 2. KUNCI SUKSESNYA: Kembalikan data dalam bentuk JSON, bukan View!
+        LogAktivitas::create([
+
+            'user_id' => auth()->id(),
+
+            'aktivitas' => 'Petugas mengedit berita'
+
+        ]);
         return response()->json($berita);
     }
 
@@ -107,6 +122,13 @@ class BeritaController extends Controller
         }
 
         $berita->delete();
+        LogAktivitas::create([
+
+            'user_id' => auth()->id(),
+
+            'aktivitas' => 'Petugas menghapus berita'
+
+        ]);
 
         return redirect()->back()->with('success', 'Berita berhasil dihapus!');
     }
